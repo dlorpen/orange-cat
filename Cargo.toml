@@ -1,7 +1,7 @@
 [package]
 name = "orange-cat"
 authors = ["Dave Orpen"]
-license = "GNU GPL v3.0"
+license = "GPL-3.0-only"
 description = "A cat clone which colorizes its output"
 readme = "README.md"
 homepage = "https://github.com/dlorpen/orange-cat"
