@@ -1,0 +1,14 @@
+[package]
+name = "orange-cat"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.95"
+clap = { version = "4.5.29", features = ["derive"] }
+clio = { version = "0.3.5", features = ["clap", "clap-parse"] }
+colored = "3.0.0"
+confy = "0.6.1"
+panic = { version = "0.4.0", default-features = false, features = ["color"] }
+regex = "1.11.1"
+serde = { version = "1.0.217", features = ["serde_derive"] }
