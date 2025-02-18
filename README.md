@@ -35,13 +35,13 @@ And of course you can get help using `orange-cat --help`.
 
 ## Installation
 
-Currently the only way to get orange-cat` is cargo install:
+Currently the only way to get orange-cat is cargo install:
 
 ```bash
 	cargo install orange-cat
 ```
 
-You'll need a recent version of rust.
+You'll need a recent version of rust and cargo, which you can get [here](https://www.rust-lang.org/tools/install).
 
 ## About
 

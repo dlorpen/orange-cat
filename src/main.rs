@@ -11,7 +11,7 @@ use config::{load_config, set_color_always, show_cfg_path};
 fn main() -> Result<()> {
     config::setup_panic();
 
-    let mut args = cli::Args::parse();
+    let args = cli::Args::parse();
 
     if args.show_cfg_path {
         show_cfg_path();
@@ -26,16 +26,19 @@ fn main() -> Result<()> {
 
     let matching_fns: Vec<_> = config.get_matching_rules();
 
-    let mut input = BufReader::new(args.input.lock());
     let mut output = io::stdout().lock();
 
-    let mut line = String::new();
-    while input.read_line(&mut line)? > 0 {
-        if matching_fns.iter().all(|func| !func(&line, &mut output)) {
-            write!(output, "{}", line.white())?;
+    for mut input in args.input {
+        let mut input = BufReader::new(input.lock());
+
+        let mut line = String::new();
+        while input.read_line(&mut line)? > 0 {
+            if matching_fns.iter().all(|func| !func(&line, &mut output)) {
+                write!(output, "{}", line.white())?;
+            }
+            output.flush()?;
+            line.clear();
         }
-        output.flush()?;
-        line.clear();
     }
 
     Ok(())

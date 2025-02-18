@@ -3,9 +3,10 @@ use clio::Input;
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
+#[clap(version, about, author)]
 pub struct Args {
     #[clap(value_parser, default_value = "-")]
-    pub input: Input,
+    pub input: Vec<Input>,
 
     #[arg(long, short)]
     pub cfg_file: Option<PathBuf>,
