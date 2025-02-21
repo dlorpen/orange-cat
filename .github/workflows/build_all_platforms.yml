@@ -1,0 +1,129 @@
+name: Build All Platforms
+on:
+  workflow_dispatch:
+    commit_hash:
+      description: The hash of the commit to build
+      required: false
+      default: ''
+
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust-target: [aarch64-unknown-linux-musl, x86_64-unknown-linux-musl ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit_hash || github.sha }}
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            ~/.rustup
+          key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-rust-
+      - name: Install rust target
+        run: rustup target add ${{ matrix.rust-target }}
+
+      - name: Build
+        run: cargo build --target ${{ matrix.rust-target }} --release
+      - name: Test
+        run: cargo test --verbosecargo test --target ${{ matrix.rust-target }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: orange-cat-${{ matrix.rust-target }}
+          path: target/${{ matrix.rust-target }}/release/orange-cat
+
+  build_windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        rust-target: [ aarch64-pc-windows-msvc, x86_64-pc-windows-msvc ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit_hash || github.sha }}
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            ~/.rustup
+          key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-rust-
+      - name: Install rust target
+        run: rustup target add ${{ matrix.rust-target }}
+
+      - name: Build
+        run: cargo build --target ${{ matrix.rust-target }} --release
+      - name: Test
+        run: cargo test --verbosecargo test --target ${{ matrix.rust-target }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: orange-cat-${{ matrix.rust-target }}
+          path: target/${{ matrix.rust-target }}/release/orange-cat
+
+  build_macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        rust-target: [ aarch64-apple-darwin, x86_64-apple-darwin ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit_hash || github.sha }}
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            ~/.rustup
+          key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-rust-
+      - name: Install rust target
+        run: rustup target add ${{ matrix.rust-target }}
+
+      - name: Build
+        run: cargo build --target ${{ matrix.rust-target }} --release
+      - name: Test
+        run: cargo test --verbosecargo test --target ${{ matrix.rust-target }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: orange-cat-${{ matrix.rust-target }}
+          path: target/${{ matrix.rust-target }}/release/orange-cat
+
+  release:
+    needs: [build_linux, build_windows, build_macos]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit_hash || github.sha }}
+      - uses: actions/download-artifact@v4
+        path: './artifacts/'
+      - name: Set Release Tag Name
+        id: release-tag
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            # tag push
+            echo "RELEASE_TAG=${{ github.ref_name }}" >> $GITHUB_ENV
+          else
+            # manual trigger
+            echo "RELEASE_TAG=${{ github.event.inputs.commit_hash || 'HEAD' }}" >> $GITHUB_ENV
+          fi
+
+      - name: Create Github release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./artifacts/*
+          tag_name: ${{ env.RELEASE_TAG }}
