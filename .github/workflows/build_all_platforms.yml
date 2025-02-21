@@ -113,6 +113,13 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: ./artifacts/
+
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Listing downloaded files:"
+          ls -R ./artifacts
+
       - name: Set Release Tag Name
         id: release-tag
         run: |
@@ -127,7 +134,7 @@ jobs:
       - name: Create Github release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./artifacts/*
+          files: /home/runner/work/orange-cat/orange-cat/artifacts/*
           tag_name: ${{ env.RELEASE_TAG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
