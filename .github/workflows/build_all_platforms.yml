@@ -134,7 +134,7 @@ jobs:
       - name: Create Github release
         uses: softprops/action-gh-release@v2
         with:
-          files: /home/runner/work/orange-cat/orange-cat/artifacts/*
+          files: ./artifacts/**/*
           tag_name: ${{ env.RELEASE_TAG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
