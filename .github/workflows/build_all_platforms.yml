@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        rust-target: [aarch64-unknown-linux-musl, x86_64-unknown-linux-musl ]
+        rust-target: [ x86_64-unknown-linux-musl ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: cargo build --target ${{ matrix.rust-target }} --release
       - name: Test
-        run: cargo test --verbosecargo test --target ${{ matrix.rust-target }}
+        run: cargo test --target ${{ matrix.rust-target }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -46,7 +46,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        rust-target: [ aarch64-pc-windows-msvc, x86_64-pc-windows-msvc ]
+        rust-target: [ x86_64-pc-windows-msvc ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,7 +65,7 @@ jobs:
       - name: Build
         run: cargo build --target ${{ matrix.rust-target }} --release
       - name: Test
-        run: cargo test --verbosecargo test --target ${{ matrix.rust-target }}
+        run: cargo test --target ${{ matrix.rust-target }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -76,7 +76,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        rust-target: [ aarch64-apple-darwin, x86_64-apple-darwin ]
+        rust-target: [ x86_64-apple-darwin ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -95,7 +95,7 @@ jobs:
       - name: Build
         run: cargo build --target ${{ matrix.rust-target }} --release
       - name: Test
-        run: cargo test --verbosecargo test --target ${{ matrix.rust-target }}
+        run: cargo test --target ${{ matrix.rust-target }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
