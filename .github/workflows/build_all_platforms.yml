@@ -36,11 +36,17 @@ jobs:
         run: cargo build --target ${{ matrix.rust-target }} --release
       - name: Test
         run: cargo test --target ${{ matrix.rust-target }}
+      - name: Zip artifact
+        shell: bash
+        run: |
+          zip -j "orange-cat-${{ matrix.rust-target }}.zip" \
+                 "target/${{ matrix.rust-target }}/release/orange-cat"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: orange-cat-${{ matrix.rust-target }}
-          path: target/${{ matrix.rust-target }}/release/orange-cat
+          path: orange-cat-${{ matrix.rust-target }}.zip
 
   build_windows:
     runs-on: windows-latest
@@ -66,11 +72,18 @@ jobs:
         run: cargo build --target ${{ matrix.rust-target }} --release
       - name: Test
         run: cargo test --target ${{ matrix.rust-target }}
+      - name: Zip artifact
+        shell: pwsh
+        run: |
+          Compress-Archive `
+              -Path "target/${{ matrix.rust-target }}/release/orange-cat.exe" `
+              -DestinationPath "orange-cat-${{ matrix.rust-target }}.zip"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: orange-cat-${{ matrix.rust-target }}
-          path: target/${{ matrix.rust-target }}/release/orange-cat.exe
+          path: orange-cat-${{ matrix.rust-target }}.zip
 
   build_macos:
     runs-on: macos-latest
@@ -96,11 +109,17 @@ jobs:
         run: cargo build --target ${{ matrix.rust-target }} --release
       - name: Test
         run: cargo test --target ${{ matrix.rust-target }}
+      - name: Zip artifact
+        shell: bash
+        run: |
+          zip -j "orange-cat-${{ matrix.rust-target }}.zip" \
+                 "target/${{ matrix.rust-target }}/release/orange-cat"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: orange-cat-${{ matrix.rust-target }}
-          path: target/${{ matrix.rust-target }}/release/orange-cat
+          path: orange-cat-${{ matrix.rust-target }}.zip
 
   release:
     needs: [build_linux, build_windows, build_macos]
